@@ -2,18 +2,18 @@ using CSharpFunctionalExtensions;
 
 namespace DeliveryApp.Core.Domain.Models.SharedKernel;
 
-public class Location : ValueObject
+public class Location : ValueObject, ICorrectByMinMaxMax
 {
     public static readonly int Min = 1;
     public static readonly int Max = 10;
 
     public Location(int x, int y)
     {
-        X = IsCorrect(x)
+        X = (this as ICorrectByMinMaxMax).IsCorrect(x, Min, Max)
             ? x
             : throw new ArgumentOutOfRangeException(nameof(x), $"Значение X должно быть в пределах от {Min} до {Max})");
         
-        Y = IsCorrect(y)
+        Y = (this as ICorrectByMinMaxMax).IsCorrect(y, Min, Max)
             ? y
             : throw new ArgumentOutOfRangeException(nameof(y), $"Значение Y должно быть в пределах от {Min} до {Max})");
     }
@@ -21,9 +21,7 @@ public class Location : ValueObject
     public int X { get; }
 
     public int Y { get; }
-
-    private bool IsCorrect(int value) => value >= Min && value <= Max;
-
+    
     public int DistanceTo(Location other)
     {
         return Math.Abs(X - other.X) + Math.Abs(Y - other.Y);

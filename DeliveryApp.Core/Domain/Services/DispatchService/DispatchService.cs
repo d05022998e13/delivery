@@ -28,6 +28,7 @@ public class DispatchService : IDispatchService
             }
         }
         
+        resultCourier.SetBusy();
         order.Assign(resultCourier.Id);
     }
 }

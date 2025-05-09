@@ -1,9 +1,10 @@
 using DeliveryApp.Core.Domain.Models.SharedKernel;
+using DeliveryApp.Core.Domain.Models.SharedKernel.Interfaces;
 using Primitives;
 
 namespace DeliveryApp.Core.Domain.Models.CourierAggregate;
 
-public class Courier : Aggregate<Guid>
+public class Courier : Aggregate<Guid>, ILocationOwner
 {
     public string Name { get;  private set; }
     

@@ -1,15 +1,16 @@
 using DeliveryApp.Core.Domain.Models.SharedKernel;
+using DeliveryApp.Core.Domain.Models.SharedKernel.Interfaces;
 using Primitives;
 
 namespace DeliveryApp.Core.Domain.Models.OrderAggregate;
 
-public class Order : Aggregate<Guid>
+public class Order : Aggregate<Guid>, ILocationOwner
 {
     public Location Location { get; private set; }
     
     public OrderStatus Status { get; private set;}
     
-    public Guid CourierId { get; private set;}
+    public Guid? CourierId { get; private set;}
 
     public static Order Create(Guid id, Location location)
     {

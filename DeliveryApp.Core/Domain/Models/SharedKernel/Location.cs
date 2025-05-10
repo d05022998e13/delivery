@@ -1,4 +1,5 @@
 using CSharpFunctionalExtensions;
+using DeliveryApp.Core.Domain.Models.SharedKernel.Interfaces;
 
 namespace DeliveryApp.Core.Domain.Models.SharedKernel;
 

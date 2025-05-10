@@ -8,6 +8,8 @@ public sealed class Transport : Entity<Guid>
     public string Name { get; private set; }
     
     public Speed Speed { get; private set; }
+    
+    private Transport() {}
 
     public Transport(string name, int speed)
     {

@@ -1,4 +1,4 @@
-namespace DeliveryApp.Core.Domain.Models.SharedKernel;
+namespace DeliveryApp.Core.Domain.Models.SharedKernel.Interfaces;
 
 public interface ICorrectByMinMaxMax
 { 

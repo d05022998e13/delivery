@@ -5,7 +5,7 @@ namespace DeliveryApp.Core.Domain.Services.DispatchService;
 
 public class DispatchService : IDispatchService
 {
-    public void Dispatch(Order order, List<Courier> couriers)
+    public Courier Dispatch(Order order, List<Courier> couriers)
     {
         if (order.Status != OrderStatus.Created) throw new Exception($"Невозможно назначить заказ в статусе \"{order.Status}\"");
         
@@ -30,5 +30,7 @@ public class DispatchService : IDispatchService
         
         resultCourier.SetBusy();
         order.Assign(resultCourier.Id);
+        
+        return resultCourier;
     }
 }

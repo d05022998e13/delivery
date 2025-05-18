@@ -22,14 +22,14 @@ public interface ICourierRepository
     /// <summary>
     /// Создание курьера.
     /// </summary>
-    /// <param name="order">Курьер.</param>
+    /// <param name="courier">Курьер.</param>
     /// <param name="ct">Токен отмены.</param>
     /// <returns>Результат выполнения.</returns>
-    Task CreateAsync(Courier order, CancellationToken ct);
+    Task CreateAsync(Courier courier, CancellationToken ct);
 
     /// <summary>
     /// Обновление курьера.
     /// </summary>
-    /// <param name="order">Курьер.</param>
-    void Update(Courier order);
+    /// <param name="courier">Курьер.</param>
+    void Update(Courier courier);
 }

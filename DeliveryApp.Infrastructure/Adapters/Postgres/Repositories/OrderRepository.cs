@@ -10,6 +10,9 @@ public class OrderRepository(ApplicationDbContext context) : IOrderRepository
         await context.Orders.FirstOrDefaultAsync(o => o.Id == id, ct)
         ?? throw new Exception($"Не найден заказ с идентификатором {id}");
     
+    public async Task<bool> CheckIfOrderExists(Guid id, CancellationToken ct) =>
+        await context.Orders.AnyAsync(o => o.Id == id, ct);
+    
     public async Task<Order> GetFirstCreatedAsync(CancellationToken ct) =>
         await context.Orders.FirstOrDefaultAsync(o => o.Status.Name == OrderStatus.Created.Name, ct)
         ?? throw new Exception($"Не найден ни один заказ в статусе \"{OrderStatus.Created.Name}\"");

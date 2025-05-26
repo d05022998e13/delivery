@@ -11,6 +11,14 @@ public interface IOrderRepository
     /// <param name="ct">Токен отмены.</param>
     /// <returns>Заказ.</returns>
     Task<Order> GetByIdAsync(Guid id, CancellationToken ct);
+    
+    /// <summary>
+    /// Проверка существования заказа по идентификатору.
+    /// </summary>
+    /// <param name="id">Идентификатор.</param>
+    /// <param name="ct">Токен отмены.</param>
+    /// <returns>Заказ.</returns>
+    Task<bool> CheckIfOrderExists(Guid id, CancellationToken ct);
 
     /// <summary>
     /// Получение заказа в статусе "Создан".

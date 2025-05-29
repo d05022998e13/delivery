@@ -8,6 +8,7 @@ using DeliveryApp.Core.Application.UseCases.Queries.GetBusyCouriers;
 using DeliveryApp.Core.Application.UseCases.Queries.GetNotCompletedOrders;
 using DeliveryApp.Core.Domain.Services.DispatchService;
 using DeliveryApp.Core.Ports;
+using DeliveryApp.Infrastructure.Adapters.Grpc.Geo;
 using DeliveryApp.Infrastructure.Adapters.Postgres;
 using DeliveryApp.Infrastructure.Adapters.Postgres.Repositories;
 using MediatR;
@@ -66,6 +67,10 @@ builder.Services.AddScoped<IRequestHandler<AssignOrderCommand, bool>, AssignOrde
 builder.Services.AddScoped<IRequestHandler<GetBusyCouriersQuery, GetBusyCouriersResponse>, GetBusyCouriersHandler>();
 builder.Services.AddScoped<IRequestHandler<GetNotCompletedOrdersQuery, GetNotCompletedOrdersResponse>, GetNotCompletedOrdersHandler>();
 
+// gRPC
+builder.Services.AddTransient<IGeoClient, GeoClient>();
+
+//builder.Services.ConfigureQuartz();
 builder.Services.ConfigureSwagger();
 
 builder.Services.AddControllers(options => { options.InputFormatters.Insert(0, new InputFormatterStream()); })

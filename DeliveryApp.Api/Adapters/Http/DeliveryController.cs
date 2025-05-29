@@ -18,7 +18,7 @@ public class DeliveryController(IMediator mediator) : DefaultApiController
 
     public override async Task<IActionResult> CreateOrder()
     {
-        var response = await mediator.Send(new CreateOrderCommand(Guid.NewGuid(), "test streer"));
+        var response = await mediator.Send(new CreateOrderCommand(Guid.NewGuid(), "test street"));
         if (response) return Ok();
         return BadRequest();
     }

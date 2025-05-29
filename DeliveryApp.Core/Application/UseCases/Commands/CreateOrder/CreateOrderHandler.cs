@@ -12,7 +12,7 @@ public sealed class CreateOrderHandler(
 {
     public async Task<bool> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        if (await orderRepository.GetByIdAsync(request.BasketId, cancellationToken) != null)
+        if (await orderRepository.CheckIfOrderExists(request.BasketId, cancellationToken))
             throw new Exception($"Уже существует заказ с идентификатором: {request.BasketId}");
         
         var order = Order.Create(request.BasketId, Location.Random());

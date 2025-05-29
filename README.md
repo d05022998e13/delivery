@@ -22,6 +22,8 @@
 ```
 cd DeliveryApp.Api/Adapters/Http/Contract/
 openapi-generator generate -i https://gitlab.com/microarch-ru/microservices/dotnet/system-design/-/raw/main/services/delivery/contracts/openapi.yml -g aspnetcore -o . --package-name OpenApi --additional-properties classModifier=abstract --additional-properties operationResultTask=true
+
+openapi-generator-cli generate -i openapi.yml -g aspnetcore -o . --package-name OpenApi --additional-properties classModifier=abstract --additional-properties operationResultTask=true
 ```
 # БД
 ```

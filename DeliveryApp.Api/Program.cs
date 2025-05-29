@@ -1,6 +1,6 @@
 using System.Reflection;
-using CSharpFunctionalExtensions;
 using DeliveryApp.Api;
+using DeliveryApp.Api.Extensions;
 using DeliveryApp.Core.Application.UseCases.Commands.AssignOrder;
 using DeliveryApp.Core.Application.UseCases.Commands.CreateOrder;
 using DeliveryApp.Core.Application.UseCases.Commands.MoveCouriers;
@@ -12,6 +12,9 @@ using DeliveryApp.Infrastructure.Adapters.Postgres;
 using DeliveryApp.Infrastructure.Adapters.Postgres.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
+using OpenApi.Formatters;
 using Primitives;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -63,6 +66,17 @@ builder.Services.AddScoped<IRequestHandler<AssignOrderCommand, bool>, AssignOrde
 builder.Services.AddScoped<IRequestHandler<GetBusyCouriersQuery, GetBusyCouriersResponse>, GetBusyCouriersHandler>();
 builder.Services.AddScoped<IRequestHandler<GetNotCompletedOrdersQuery, GetNotCompletedOrdersResponse>, GetNotCompletedOrdersHandler>();
 
+builder.Services.ConfigureSwagger();
+
+builder.Services.AddControllers(options => { options.InputFormatters.Insert(0, new InputFormatterStream()); })
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+        options.SerializerSettings.Converters.Add(new StringEnumConverter
+        {
+            NamingStrategy = new CamelCaseNamingStrategy()
+        });
+    });
 
 var app = builder.Build();
 
@@ -76,11 +90,16 @@ else
 app.UseHealthChecks("/health");
 app.UseRouting();
 
-// Apply Migrations
-// using (var scope = app.Services.CreateScope())
-// {
-//     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-//     db.Database.Migrate();
-// }
+//Apply Migrations
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+}
+
+app.UseConfiguredSwagger();
+
+app.UseCors();
+app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
 app.Run();

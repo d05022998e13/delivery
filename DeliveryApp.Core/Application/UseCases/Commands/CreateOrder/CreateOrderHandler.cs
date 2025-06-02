@@ -8,14 +8,17 @@ namespace DeliveryApp.Core.Application.UseCases.Commands.CreateOrder;
 
 public sealed class CreateOrderHandler(
     IOrderRepository orderRepository,
-    IUnitOfWork unitOfWork) : IRequestHandler<CreateOrderCommand, bool>
+    IUnitOfWork unitOfWork,
+    IGeoClient geoClient) : IRequestHandler<CreateOrderCommand, bool>
 {
     public async Task<bool> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
         if (await orderRepository.CheckIfOrderExists(request.BasketId, cancellationToken))
             throw new Exception($"Уже существует заказ с идентификатором: {request.BasketId}");
         
-        var order = Order.Create(request.BasketId, Location.Random());
+        var location = await geoClient.GetLocation(request.Street, cancellationToken);
+        
+        var order = Order.Create(request.BasketId, location);
         await orderRepository.CreateAsync(order, cancellationToken);
         
         return await unitOfWork.SaveChangesAsync(cancellationToken);

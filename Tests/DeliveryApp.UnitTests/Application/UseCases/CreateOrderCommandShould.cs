@@ -14,12 +14,13 @@ namespace DeliveryApp.UnitTests.Application.UseCases;
 
 public class CreateOrderCommandShould
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUnitOfWork _unitOfWorkMock;
     private readonly IOrderRepository _orderRepositoryMock;
+    private readonly IGeoClient _geoClientMock;
     
     public CreateOrderCommandShould()
     {
-        _unitOfWork = Substitute.For<IUnitOfWork>();
+        _unitOfWorkMock = Substitute.For<IUnitOfWork>();
         _orderRepositoryMock = Substitute.For<IOrderRepository>();
     }
     
@@ -31,10 +32,11 @@ public class CreateOrderCommandShould
         
         _orderRepositoryMock.GetByIdAsync(id, CancellationToken.None).Returns(Task.FromResult<Order>(null));
         _orderRepositoryMock.CreateAsync(Arg.Any<Order>(), CancellationToken.None).Returns(Task.CompletedTask);
-        _unitOfWork.SaveChangesAsync().Returns(Task.FromResult(true));
+        _unitOfWorkMock.SaveChangesAsync().Returns(Task.FromResult(true));
+        _geoClientMock.GetLocation(Arg.Any<string>(), CancellationToken.None).Returns(Location.Random());
 
         var command = new CreateOrderCommand(id, nameof(CreateOrderCommand.Street));
-        var handler = new CreateOrderHandler(_orderRepositoryMock, _unitOfWork);
+        var handler = new CreateOrderHandler(_orderRepositoryMock, _unitOfWorkMock, _geoClientMock);
 
         //Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -51,10 +53,11 @@ public class CreateOrderCommandShould
         
         _orderRepositoryMock.GetByIdAsync(id, CancellationToken.None).Returns(Task.FromResult(Order.Create(id, new Location(1, 1))));
         _orderRepositoryMock.CreateAsync(Arg.Any<Order>(), CancellationToken.None).Returns(Task.CompletedTask);
-        _unitOfWork.SaveChangesAsync().Returns(Task.FromResult(true));
+        _unitOfWorkMock.SaveChangesAsync().Returns(Task.FromResult(true));
+        _geoClientMock.GetLocation(Arg.Any<string>(), CancellationToken.None).Returns(Location.Random());
 
         var command = new CreateOrderCommand(id, nameof(CreateOrderCommand.Street));
-        var handler = new CreateOrderHandler(_orderRepositoryMock, _unitOfWork);
+        var handler = new CreateOrderHandler(_orderRepositoryMock, _unitOfWorkMock, _geoClientMock);
 
         //Act
         var result = () => handler.Handle(command, CancellationToken.None).Result;

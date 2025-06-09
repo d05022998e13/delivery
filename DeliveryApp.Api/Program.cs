@@ -1,5 +1,6 @@
 using System.Reflection;
 using DeliveryApp.Api;
+using DeliveryApp.Api.Adapters.Kafka.BasketConfirmed;
 using DeliveryApp.Api.Extensions;
 using DeliveryApp.Core.Application.UseCases.Commands.AssignOrder;
 using DeliveryApp.Core.Application.UseCases.Commands.CreateOrder;
@@ -70,7 +71,16 @@ builder.Services.AddScoped<IRequestHandler<GetNotCompletedOrdersQuery, GetNotCom
 // gRPC
 builder.Services.AddTransient<IGeoClient, GeoClient>();
 
+// Message Broker Consumer
+builder.Services.Configure<HostOptions>(options =>
+{
+    options.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore;
+    options.ShutdownTimeout = TimeSpan.FromSeconds(30);
+});
+builder.Services.AddHostedService<ConsumerService>();
+
 //builder.Services.ConfigureQuartz();
+
 builder.Services.ConfigureSwagger();
 
 builder.Services.AddControllers(options => { options.InputFormatters.Insert(0, new InputFormatterStream()); })

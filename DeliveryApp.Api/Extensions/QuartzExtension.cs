@@ -13,12 +13,12 @@ public static class QuartzExtension
             var assignOrdersJobKey = new JobKey(nameof(AssignOrdersJob));
             var moveCouriersJobKey = new JobKey(nameof(MoveCouriersJob));
 
-            configure
-                .AddJob<CreateOrderJob>(createOrderJobJobKey)
-                .AddTrigger(
-                    trigger => trigger
-                        .ForJob(createOrderJobJobKey)
-                        .WithSimpleSchedule(schedule => schedule.WithIntervalInSeconds(1)));
+            // configure
+            //     .AddJob<CreateOrderJob>(createOrderJobJobKey)
+            //     .AddTrigger(
+            //         trigger => trigger
+            //             .ForJob(createOrderJobJobKey)
+            //             .WithSimpleSchedule(schedule => schedule.WithIntervalInSeconds(1)));
                 
             configure
                 .AddJob<AssignOrdersJob>(assignOrdersJobKey)

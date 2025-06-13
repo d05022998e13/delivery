@@ -3,7 +3,9 @@ using DeliveryApp.Core.Domain.Models.SharedKernel;
 using DeliveryApp.Infrastructure.Adapters.Postgres;
 using DeliveryApp.Infrastructure.Adapters.Postgres.Repositories;
 using FluentAssertions;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using NSubstitute;
 using Testcontainers.PostgreSql;
 using Xunit;
 
@@ -12,6 +14,8 @@ namespace DeliveryApp.IntegrationTests.Repositories;
 public class CourierRepositoryShould: IAsyncLifetime
 {
     private ApplicationDbContext _context;
+    
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
     
     private readonly PostgreSqlContainer _postgreSqlContainer = new PostgreSqlBuilder()
         .WithImage("postgres:14.7")
@@ -52,7 +56,7 @@ public class CourierRepositoryShould: IAsyncLifetime
         var repository = new CourierRepository(_context);
         await repository.CreateAsync(courier, CancellationToken.None);
         
-        var unitOfWork = new UnitOfWork(_context);
+        var unitOfWork = new UnitOfWork(_context, _mediator);
         await unitOfWork.SaveChangesAsync();
 
         //Assert
@@ -70,7 +74,7 @@ public class CourierRepositoryShould: IAsyncLifetime
         var repository = new CourierRepository(_context);
         await repository.CreateAsync(courier, CancellationToken.None);
         
-        var unitOfWork = new UnitOfWork(_context);
+        var unitOfWork = new UnitOfWork(_context, _mediator);
         await unitOfWork.SaveChangesAsync();
         
         courier.SetBusy();
@@ -103,7 +107,7 @@ public class CourierRepositoryShould: IAsyncLifetime
             await repository.CreateAsync(courier, CancellationToken.None);
         }
         
-        var unitOfWork = new UnitOfWork(_context);
+        var unitOfWork = new UnitOfWork(_context, _mediator);
         await unitOfWork.SaveChangesAsync();
         
         //Assert

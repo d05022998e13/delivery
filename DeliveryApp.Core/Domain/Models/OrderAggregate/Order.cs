@@ -1,3 +1,4 @@
+using DeliveryApp.Core.Domain.Models.OrderAggregate.DomainEvents;
 using DeliveryApp.Core.Domain.Models.SharedKernel;
 using DeliveryApp.Core.Domain.Models.SharedKernel.Interfaces;
 using Primitives;
@@ -34,6 +35,8 @@ public class Order : Aggregate<Guid>, ILocationOwner
         
         CourierId = courierId;
         Status = OrderStatus.Assigned;
+        
+        RaiseDomainEvent(new OrderStatusChangedDomainEvent(new OrderStatusChanged(this)));
     }
 
     public void Complete()
@@ -41,5 +44,7 @@ public class Order : Aggregate<Guid>, ILocationOwner
         if (Status != OrderStatus.Assigned) throw new Exception($"Невозможно завершить заказ в статусе: \"{Status}\"");
         
         Status = OrderStatus.Completed;
+        
+        RaiseDomainEvent(new OrderStatusChangedDomainEvent(new OrderStatusChanged(this)));
     }
 }

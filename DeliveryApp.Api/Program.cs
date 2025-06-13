@@ -2,14 +2,17 @@ using System.Reflection;
 using DeliveryApp.Api;
 using DeliveryApp.Api.Adapters.Kafka.BasketConfirmed;
 using DeliveryApp.Api.Extensions;
+using DeliveryApp.Core.Application.DomainEventHandlers;
 using DeliveryApp.Core.Application.UseCases.Commands.AssignOrder;
 using DeliveryApp.Core.Application.UseCases.Commands.CreateOrder;
 using DeliveryApp.Core.Application.UseCases.Commands.MoveCouriers;
 using DeliveryApp.Core.Application.UseCases.Queries.GetBusyCouriers;
 using DeliveryApp.Core.Application.UseCases.Queries.GetNotCompletedOrders;
+using DeliveryApp.Core.Domain.Models.OrderAggregate.DomainEvents;
 using DeliveryApp.Core.Domain.Services.DispatchService;
 using DeliveryApp.Core.Ports;
 using DeliveryApp.Infrastructure.Adapters.Grpc.Geo;
+using DeliveryApp.Infrastructure.Adapters.Kafka.OrderStatusChanged;
 using DeliveryApp.Infrastructure.Adapters.Postgres;
 using DeliveryApp.Infrastructure.Adapters.Postgres.Repositories;
 using MediatR;
@@ -79,7 +82,14 @@ builder.Services.Configure<HostOptions>(options =>
 });
 builder.Services.AddHostedService<ConsumerService>();
 
-//builder.Services.ConfigureQuartz();
+// Domain Event Handlers
+builder.Services.AddTransient<INotificationHandler<OrderStatusChangedDomainEvent>, OrderStatusChangedDomainEventHandler>();
+
+// Message Broker Producer
+builder.Services.AddTransient<IMessageBusProducer, ProducerService>();
+
+// Jobs
+builder.Services.ConfigureQuartz();
 
 builder.Services.ConfigureSwagger();
 

@@ -41,6 +41,10 @@
 
     <ItemGroup>
       <Protobuf Include="Adapters\Grpc\Geo\Contract.proto" />
+      <None Remove="Adapters\Kafka\OrderStatusChanged\Contract.proto" />
+      <Protobuf Include="Adapters\Kafka\OrderStatusChanged\Contract.proto">
+        <Generator>MSBuild:Compile</Generator>
+      </Protobuf>
     </ItemGroup>
 
 </Project>

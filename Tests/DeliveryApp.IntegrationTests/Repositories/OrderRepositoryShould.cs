@@ -3,7 +3,9 @@ using DeliveryApp.Core.Domain.Models.SharedKernel;
 using DeliveryApp.Infrastructure.Adapters.Postgres;
 using DeliveryApp.Infrastructure.Adapters.Postgres.Repositories;
 using FluentAssertions;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using NSubstitute;
 using Testcontainers.PostgreSql;
 using Xunit;
 
@@ -12,6 +14,8 @@ namespace DeliveryApp.IntegrationTests.Repositories;
 public class OrderRepositoryShould : IAsyncLifetime
 {
     private ApplicationDbContext _context;
+    
+    private readonly IMediator _mediator = Substitute.For<IMediator>();
     
     private readonly PostgreSqlContainer _postgreSqlContainer = new PostgreSqlBuilder()
         .WithImage("postgres:14.7")
@@ -52,7 +56,7 @@ public class OrderRepositoryShould : IAsyncLifetime
         var repository = new OrderRepository(_context);
         await repository.CreateAsync(order, CancellationToken.None);
         
-        var unitOfWork = new UnitOfWork(_context);
+        var unitOfWork = new UnitOfWork(_context, _mediator);
         await unitOfWork.SaveChangesAsync();
 
         //Assert
@@ -72,7 +76,7 @@ public class OrderRepositoryShould : IAsyncLifetime
         var repository = new OrderRepository(_context);
         await repository.CreateAsync(order, CancellationToken.None);
         
-        var unitOfWork = new UnitOfWork(_context);
+        var unitOfWork = new UnitOfWork(_context, _mediator);
         await unitOfWork.SaveChangesAsync();
         
         order.Assign(courierId);
@@ -102,7 +106,7 @@ public class OrderRepositoryShould : IAsyncLifetime
             await repository.CreateAsync(order, CancellationToken.None);
         }
         
-        var unitOfWork = new UnitOfWork(_context);
+        var unitOfWork = new UnitOfWork(_context, _mediator);
         await unitOfWork.SaveChangesAsync();
 
         //Assert
@@ -131,7 +135,7 @@ public class OrderRepositoryShould : IAsyncLifetime
             await repository.CreateAsync(order, CancellationToken.None);
         }
         
-        var unitOfWork = new UnitOfWork(_context);
+        var unitOfWork = new UnitOfWork(_context, _mediator);
         await unitOfWork.SaveChangesAsync();
 
         //Assert

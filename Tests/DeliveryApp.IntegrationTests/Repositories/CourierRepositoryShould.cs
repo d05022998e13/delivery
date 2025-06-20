@@ -15,8 +15,6 @@ public class CourierRepositoryShould: IAsyncLifetime
 {
     private ApplicationDbContext _context;
     
-    private readonly IMediator _mediator = Substitute.For<IMediator>();
-    
     private readonly PostgreSqlContainer _postgreSqlContainer = new PostgreSqlBuilder()
         .WithImage("postgres:14.7")
         .WithDatabase("basket")
@@ -56,7 +54,7 @@ public class CourierRepositoryShould: IAsyncLifetime
         var repository = new CourierRepository(_context);
         await repository.CreateAsync(courier, CancellationToken.None);
         
-        var unitOfWork = new UnitOfWork(_context, _mediator);
+        var unitOfWork = new UnitOfWork(_context);
         await unitOfWork.SaveChangesAsync();
 
         //Assert
@@ -74,7 +72,7 @@ public class CourierRepositoryShould: IAsyncLifetime
         var repository = new CourierRepository(_context);
         await repository.CreateAsync(courier, CancellationToken.None);
         
-        var unitOfWork = new UnitOfWork(_context, _mediator);
+        var unitOfWork = new UnitOfWork(_context);
         await unitOfWork.SaveChangesAsync();
         
         courier.SetBusy();
@@ -107,7 +105,7 @@ public class CourierRepositoryShould: IAsyncLifetime
             await repository.CreateAsync(courier, CancellationToken.None);
         }
         
-        var unitOfWork = new UnitOfWork(_context, _mediator);
+        var unitOfWork = new UnitOfWork(_context);
         await unitOfWork.SaveChangesAsync();
         
         //Assert
